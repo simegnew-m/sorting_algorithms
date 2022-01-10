@@ -1,75 +1,50 @@
 #include "sort.h"
+#include <stdlib.h>
 
 /**
-* findmax - Finds the maximum value in an array
-* @array: array to find max value of
-* @size: Size of array
-* Return: Largest value
-*/
-
-int findmax(int *array, size_t size)
-{
-	int i, max = 0;
-
-	for (i = 0; i < (int)size; i++)
-	{
-		if (max < array[i])
-			max = array[i];
-	}
-	return (max);
-}
-
-/**
-* count - Counts number of occurences of value in an array
-* @array: Array to count values of
-* @size: Size of array
-* @val: Value to count in the array
-* Return: Count of va
-*/
-
-int count(int *array, size_t size, int val)
-{
-	int c = 0, i;
-
-	for (i = 0; i < (int)size; i++)
-	{
-		if (array[i] == val)
-			c++;
-	}
-	return (c);
-}
-
-/**
-* counting_sort - sorts array using counting algorithm
-* @array: Array to sort
-* @size: Size of array
-*/
-
+ * counting_sort - sorts an array of integers in ascending order
+ * using the Counting sort algorithm
+ * @array: Array to be sorted
+ * @size: size of the array
+ *
+ * Return: void
+ */
 void counting_sort(int *array, size_t size)
 {
-	int max, *ca, i, *out, j;
+	int *count_arr, k;
+	size_t i, j, arr_size;
 
-	if (array == NULL || size < 2)
+	if (array == NULL || size <= 1)
 		return;
-	max = findmax(array, size);
-	out = malloc(sizeof(int) * (int)size);
-	ca = malloc(sizeof(int) * (max + 1));
-	if (ca == NULL || out == NULL)
-		return;
-	for (i = j = 0; i < max + 1; i++)
+	arr_size = array[0];
+	for (i = 0; array[i]; i++)
 	{
-		j += count(array, size, i);
-		ca[i] = j;
+		if (array[i] > (int)arr_size)
+			arr_size = array[i];
 	}
-	print_array(ca, max + 1);
-	for (i = 0; i < (int)size; i++)
-	{
-		out[ca[array[i]] - 1] = array[i];
-		ca[array[i]] -= 1;
-	}
-	for (i = 0; i < (int)size; i++)
-		array[i] = out[i];
 
-	free(out);
-	free(ca);
+	arr_size += 1;
+
+	count_arr = malloc(arr_size * sizeof(int *));
+	if (count_arr == NULL)
+		return;
+
+	for (i = 0; i < arr_size; i++)
+		count_arr[i] = 0;
+
+	for (i = 0; i < size; i++)
+		count_arr[array[i]] += 1;
+
+	for (i = 0; i <= arr_size; i++)
+		count_arr[i] += count_arr[i - 1];
+
+	print_array(count_arr, arr_size);
+
+	for (i = 1, j = 0; i <= arr_size; i++)
+		if (count_arr[i] != count_arr[i - 1])
+		{
+			for (k = 0; k < count_arr[i] - count_arr[i - 1]; k++)
+				array[j++] = i;
+		}
+	free(count_arr);
 }
