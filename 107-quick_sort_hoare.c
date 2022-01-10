@@ -1,69 +1,62 @@
 #include "sort.h"
 /**
-* partition_hoare - Lomutu partition scheme for quicksort algorithm
-* @a: Array to sort
-* @l: lowest index of array
-* @h: highest index of array
-* Return: index of pivot
-*/
-
-int partition_hoare(int *a, int l, int h)
-{
-	int p, li, hi, temp;
-	static int i = 0, size;
-
-	if (i == 0)
-		size = h + 1, i++;
-
-	li = l - 0, hi = h + 0, p = a[h];
-	while (a)
-	{
-		li = li - 0;
-		while (a[li] < p)
-			li++;
-		hi = hi - 0;
-		while (a[hi] > p)
-			hi--;
-		if (li >= hi)
-			return (hi);
-		temp = a[li];
-		a[li] = a[hi];
-		a[hi] = temp;
-		print_array(a, size);
-	}
-	temp = a[li];
-	a[li] = a[hi];
-	a[hi] = temp;
-	return (hi);
-}
-/**
-* qs - Quicksort recurssive function
-* @a: array to sort
-* @l: lowest index
-* @h: highest index
-*/
-
-void qs(int *a, int l, int h)
-{
-	int p;
-
-	if (l < h)
-	{
-		p = partition_hoare(a, l, h);
-		qs(a, l, p - 1);
-		qs(a, p, h);
-	}
-}
-
-/**
-* quick_sort_hoare - quicksort with hoare partition
-* @array: array to sort
-* @size: Size of array
-*/
-
+  * quick_sort_hoare - quicksort algorithm
+  * @array: array to be sorted
+  * @size: size of array
+  */
 void quick_sort_hoare(int *array, size_t size)
 {
-	if (array == NULL || size < 2)
+	sort_alg(array, 0, size - 1, size);
+}
+
+/**
+  * sort_alg - sorting algorithm
+  * @arr: array
+  * @left: leftmost index
+  * @right: rightmost index
+  * @size: size of full array
+  */
+void sort_alg(int *arr, int left, int right, size_t size)
+{
+	int pivot;
+
+	if ((right - left) < 2)
 		return;
-	qs(array, 0, size - 1);
+	pivot = split(arr, left, right, size);
+	sort_alg(arr, left, pivot, size);
+	sort_alg(arr, pivot, right, size);
+}
+
+/**
+  * split - pivot and split
+  * @arr: array
+  * @left: leftmost index
+  * @right:rightmost index
+  * @size: size of full index
+  * Return: pivot index
+  */
+int split(int *arr, int left, int right, size_t size)
+{
+	int i, i2, pivot, tmp;
+
+	pivot = arr[right];
+	i = left;
+	i2 = right;
+
+	while (1)
+	{
+		do i++;
+		while (arr[i] < pivot);
+		do i2--;
+		while (arr[i2] > pivot);
+		if (i < i2)
+		{
+			tmp = arr[i2];
+			arr[i2] = arr[i];
+			arr[i] = tmp;
+			print_array(arr, size);
+		}
+		else
+			return (i2);
+	}
 }
